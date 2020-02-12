@@ -11,3 +11,4 @@ venv/
 *.so
 .env
 .venv
+experiment.py
