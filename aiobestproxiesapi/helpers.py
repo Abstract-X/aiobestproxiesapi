@@ -4,7 +4,7 @@ import urllib.parse
 
 def make_url(url: str, route: str, params: Optional[dict] = None,
              join_params: bool = False, encoding: str = "UTF-8") -> str:
-    """ Build URL from components. """
+    """ Make URL from components. Has a non-standard argument passing mode. """
 
     url = f"{url}/{route}"
 
