@@ -1,26 +1,38 @@
+from typing import Optional
 import enum
+from dataclasses import dataclass
+from datetime import datetime
 
 
-@enum.unique
 class ProxyType(enum.Enum):
+    """ Тип выгружаемых прокси.
+        https://best-proxies.ru/api/#params - type.
+
+    """
 
     HTTP = "http"
     HTTPS = "https"
     SOCKS4 = "socks4"
     SOCKS5 = "socks5"
-    ALL = None
 
 
-@enum.unique
 class ProxyAnonymityLevel(enum.Enum):
+    """ Уровень анонимности выгружаемых прокси.
+        https://best-proxies.ru/api/#params - level.
 
-    HIGHLY_ANONYMOUS = 1
-    ANONYMOUS = 2
-    TRANSPARENT = 3
+    """
+
+    HIGHLY_ANONYMOUS = 1  # высоко анонимный (элитный)
+    ANONYMOUS = 2         # анонимный
+    TRANSPARENT = 3       # прозрачный
 
 
 @enum.unique
 class ProxyCountryCode(enum.Enum):
+    """ Двубуквенные коды стран выгружаемых прокси в соответствии с ISO 3166-1 alpha-2.
+        https://best-proxies.ru/api/#params - country.
+
+    """
 
     AFGHANISTAN = "AF"
     ALAND_ISLANDS = "AX"
@@ -273,9 +285,143 @@ class ProxyCountryCode(enum.Enum):
     ZIMBABWE = "ZW"
 
 
-@enum.unique
 class ProxySpeed(enum.Enum):
+    """ Скоростной грейд выгружаемых прокси.
+        https://best-proxies.ru/api/#params - speed."""
 
-    FAST = 1
-    AVERAGE = 2
-    SLOW = 3
+    FAST = 1     # быстрые
+    MIDDLE = 2   # средние по скорости
+    SLOW = 3     # медленные
+
+
+class ProxyResponseFormat(enum.Enum):
+    """ Желаемый формат выгрузки прокси.
+        https://best-proxies.ru/api/#common - formats.
+
+    """
+
+    TXT = "txt"
+    CSV = "csv"
+    JSON = "json"
+
+
+class KeyInfoFormat(enum.Enum):
+    """ Формат выгрузки данных о жизни ключа.
+        https://best-proxies.ru/api/#keyinfo - format.
+
+    """
+
+    HOURS = "hours"
+    MINUTES = "minutes"
+    SECONDS = "seconds"
+
+
+@dataclass()
+class Proxy:
+    """ Proxy-server information class. """
+
+    ip: str
+    port: int
+    hostname: str
+    supports_http: bool
+    supports_https: bool
+    supports_socks4: bool
+    supports_socks5: bool
+    anonymity_level: ProxyAnonymityLevel
+    is_allowed_smtp: bool
+    is_allowed_yandex: bool
+    is_allowed_google: bool
+    is_allowed_mail_ru: bool
+    is_allowed_twitter: bool
+    country_code: Optional[ProxyCountryCode]
+    response_ms: int
+    good_count: int
+    bad_count: int
+    last_check_date: datetime
+    city: Optional[str]
+    region: Optional[str]
+    real_ip: str
+    test_time_secs: float
+
+    def __str__(self):
+
+        return self.uri
+
+    def __hash__(self):
+
+        return hash(self.uri)
+
+    def __eq__(self, other):
+
+        return self.uri == other
+
+    @classmethod
+    def from_json(cls, json: dict) -> "Proxy":
+        """ Create from JSON. """
+
+        ip = json["ip"]
+        port = int(json["port"])
+        hostname = json["hostname"]
+        supports_http = int(json["http"])
+        supports_https = int(json["https"])
+        supports_socks4 = int(json["socks4"])
+        supports_socks5 = int(json["socks5"])
+        anonymity_level = int(json["level"])
+        is_allowed_smtp = int(json["me"])
+        is_allowed_yandex = int(json["yandex"])
+        is_allowed_google = int(json["google"])
+        is_allowed_mail_ru = int(json["mailru"])
+        is_allowed_twitter = int(json["twitter"])
+        country_code = json["country_code"] or None
+        response_ms = int(json["response"])
+        good_count = int(json["good_count"])
+        bad_count = int(json["bad_count"])
+        last_check_date = json["last_check"]
+        city = json["city"] or None
+        region = json["region"] or None
+        real_ip = json["real_ip"]
+        test_time_secs = float(json["test_time"])
+
+        return cls(
+            ip=ip,
+            port=port,
+            hostname=hostname,
+            supports_http=bool(supports_http),
+            supports_https=bool(supports_https),
+            supports_socks4=bool(supports_socks4),
+            supports_socks5=bool(supports_socks5),
+            anonymity_level=ProxyAnonymityLevel(anonymity_level),
+            is_allowed_smtp=bool(is_allowed_smtp),
+            is_allowed_yandex=bool(is_allowed_yandex),
+            is_allowed_google=bool(is_allowed_google),
+            is_allowed_mail_ru=bool(is_allowed_mail_ru),
+            is_allowed_twitter=bool(is_allowed_twitter),
+            country_code=ProxyCountryCode(country_code) if (country_code is not None) else None,
+            response_ms=response_ms,
+            good_count=good_count,
+            bad_count=bad_count,
+            last_check_date=datetime.strptime(last_check_date, "%Y-%m-%d %H:%M:%S"),
+            city=city,
+            region=region,
+            real_ip=real_ip,
+            test_time_secs=test_time_secs
+        )
+
+    @property
+    def type(self):
+        """ Type of proxy, the most reliable protocol is taken. """
+
+        if self.supports_socks5:
+            return ProxyType.SOCKS5
+        elif self.supports_socks4:
+            return ProxyType.SOCKS4
+        elif self.supports_https:
+            return ProxyType.HTTPS
+        elif self.supports_http:
+            return ProxyType.HTTP
+
+    @property
+    def uri(self):
+        """ Proxy URI address. """
+
+        return f"{self.type.value}://{self.ip}:{self.port}"
