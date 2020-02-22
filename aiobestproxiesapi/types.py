@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 
-class ProxyType(enum.Enum):
+class Type(enum.Enum):
     """ Тип выгружаемых прокси.
         https://best-proxies.ru/api/#params - type.
 
@@ -16,7 +16,7 @@ class ProxyType(enum.Enum):
     SOCKS5 = "socks5"
 
 
-class ProxyAnonymityLevel(enum.Enum):
+class AnonymityLevel(enum.Enum):
     """ Уровень анонимности выгружаемых прокси.
         https://best-proxies.ru/api/#params - level.
 
@@ -28,7 +28,7 @@ class ProxyAnonymityLevel(enum.Enum):
 
 
 @enum.unique
-class ProxyCountryCode(enum.Enum):
+class Country(enum.Enum):
     """ Двубуквенные коды стран выгружаемых прокси в соответствии с ISO 3166-1 alpha-2.
         https://best-proxies.ru/api/#params - country.
 
@@ -285,7 +285,7 @@ class ProxyCountryCode(enum.Enum):
     ZIMBABWE = "ZW"
 
 
-class ProxySpeed(enum.Enum):
+class Speed(enum.Enum):
     """ Скоростной грейд выгружаемых прокси.
         https://best-proxies.ru/api/#params - speed."""
 
@@ -294,7 +294,7 @@ class ProxySpeed(enum.Enum):
     SLOW = 3     # медленные
 
 
-class ProxyResponseFormat(enum.Enum):
+class ReceiveFormat(enum.Enum):
     """ Желаемый формат выгрузки прокси.
         https://best-proxies.ru/api/#common - formats.
 
@@ -327,13 +327,13 @@ class Proxy:
     supports_https: bool
     supports_socks4: bool
     supports_socks5: bool
-    anonymity_level: ProxyAnonymityLevel
+    anonymity_level: AnonymityLevel
     is_allowed_smtp: bool
     is_allowed_yandex: bool
     is_allowed_google: bool
     is_allowed_mail_ru: bool
     is_allowed_twitter: bool
-    country_code: Optional[ProxyCountryCode]
+    country_code: Optional[Country]
     response_ms: int
     good_count: int
     bad_count: int
@@ -390,13 +390,13 @@ class Proxy:
             supports_https=bool(supports_https),
             supports_socks4=bool(supports_socks4),
             supports_socks5=bool(supports_socks5),
-            anonymity_level=ProxyAnonymityLevel(anonymity_level),
+            anonymity_level=AnonymityLevel(anonymity_level),
             is_allowed_smtp=bool(is_allowed_smtp),
             is_allowed_yandex=bool(is_allowed_yandex),
             is_allowed_google=bool(is_allowed_google),
             is_allowed_mail_ru=bool(is_allowed_mail_ru),
             is_allowed_twitter=bool(is_allowed_twitter),
-            country_code=ProxyCountryCode(country_code) if (country_code is not None) else None,
+            country_code=Country(country_code) if (country_code is not None) else None,
             response_ms=response_ms,
             good_count=good_count,
             bad_count=bad_count,
@@ -412,13 +412,13 @@ class Proxy:
         """ Type of proxy, the most reliable protocol is taken. """
 
         if self.supports_socks5:
-            return ProxyType.SOCKS5
+            return Type.SOCKS5
         elif self.supports_socks4:
-            return ProxyType.SOCKS4
+            return Type.SOCKS4
         elif self.supports_https:
-            return ProxyType.HTTPS
+            return Type.HTTPS
         elif self.supports_http:
-            return ProxyType.HTTP
+            return Type.HTTP
 
     @property
     def uri(self):

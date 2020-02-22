@@ -5,7 +5,7 @@ import string as stringlib
 import functools
 
 from . import exceptions
-from .types import ProxyType, ProxyAnonymityLevel, ProxyCountryCode, ProxySpeed, KeyInfoFormat
+from .types import Type, AnonymityLevel, Country, Speed, KeyInfoFormat
 
 
 def _prepare_param(param: Any, enum_type: Optional[EnumMeta] = None) -> Any:
@@ -101,19 +101,19 @@ class Param(enum.Enum):
 
     KEY = ("key", _prepare_param_key)
     TYPE = ("type", functools.partial(_prepare_param_list,
-                                      sort_list=True, enum_type=ProxyType))
+                                      sort_list=True, enum_type=Type))
     LEVEL = ("level", functools.partial(_prepare_param_list,
-                                        sort_list=True, enum_type=ProxyAnonymityLevel))
+                                        sort_list=True, enum_type=AnonymityLevel))
     PORTS = ("ports", functools.partial(_prepare_param_list,
                                         max_amount=5))
     PEX = ("pex", _prepare_param)
     COUNTRY = ("country", functools.partial(_prepare_param_list,
-                                            sort_list=True, max_amount=20, enum_type=ProxyCountryCode))
+                                            sort_list=True, max_amount=20, enum_type=Country))
     CEX = ("cex", _prepare_param)
     RESPONSE = ("response", _prepare_param)
     UPTIME = ("uptime", _prepare_param_uptime)
     SPEED = ("speed", functools.partial(_prepare_param_list,
-                                        sort_list=True, enum_type=ProxySpeed))
+                                        sort_list=True, enum_type=Speed))
     MAIL = ("mail", _prepare_param)
     YANDEX = ("yandex", _prepare_param)
     GOOGLE = ("google", _prepare_param)

@@ -7,8 +7,7 @@ from aiohttp import ClientSession, ClientResponse
 
 from . import helpers, exceptions
 from .params import Param
-from .types import (ProxyType, ProxyAnonymityLevel, ProxyCountryCode, ProxySpeed,
-                    ProxyResponseFormat, KeyInfoFormat, Proxy)
+from .types import Type, AnonymityLevel, Country, Speed, ReceiveFormat, KeyInfoFormat, Proxy
 
 
 API_URL = "https://api.best-proxies.ru"
@@ -132,16 +131,16 @@ class BestProxiesAPI:
     async def _get_proxies_content_with_api_params(
             self,
             *,
-            response_format: ProxyResponseFormat,
-            type_: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            level: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            receive_format: ReceiveFormat,
+            type_: Union[List[Union[Type, str]], Type, str, None] = None,
+            level: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             pex: Optional[int] = None,
-            country: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            country: Union[List[Union[Country, str]], Country, str, None] = None,
             cex: Optional[bool] = None,
             response: Optional[int] = None,
             uptime: Optional[int] = None,
-            speed: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speed: Union[List[Union[Speed, int]], Speed, int, None] = None,
             mail: Optional[bool] = None,
             yandex: Optional[bool] = None,
             google: Optional[bool] = None,
@@ -155,7 +154,7 @@ class BestProxiesAPI:
         """ Getting proxy method content for further processing. """
 
         content = await self._send_api_request(
-            route=f"proxylist.{response_format.value}",
+            route=f"proxylist.{receive_format.value}",
             method="GET",
             params=[
                 (Param.TYPE, type_),
@@ -188,15 +187,15 @@ class BestProxiesAPI:
     async def get_proxies(
             self,
             *,
-            types: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            anonimity_levels: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            types: Union[List[Union[Type, str]], Type, str, None] = None,
+            anonimity_levels: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             exclude_ports: Optional[bool] = None,
-            countries: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            countries: Union[List[Union[Country, str]], Country, str, None] = None,
             exclude_countries: Optional[bool] = None,
             response_ms: Optional[int] = None,
             uptime_hours: Optional[int] = None,
-            speeds: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speeds: Union[List[Union[Speed, int]], Speed, int, None] = None,
             is_allowed_smtp: Optional[bool] = None,
             is_allowed_yandex: Optional[bool] = None,
             is_allowed_google: Optional[bool] = None,
@@ -232,15 +231,15 @@ class BestProxiesAPI:
     async def get_proxies_txt_with_api_params(
             self,
             *,
-            type_: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            level: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            type_: Union[List[Union[Type, str]], Type, str, None] = None,
+            level: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             pex: Optional[int] = None,
-            country: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            country: Union[List[Union[Country, str]], Country, str, None] = None,
             cex: Optional[bool] = None,
             response: Optional[int] = None,
             uptime: Optional[int] = None,
-            speed: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speed: Union[List[Union[Speed, int]], Speed, int, None] = None,
             mail: Optional[bool] = None,
             yandex: Optional[bool] = None,
             google: Optional[bool] = None,
@@ -253,7 +252,7 @@ class BestProxiesAPI:
     ) -> List[str]:
         """ Getting list proxies (URIs) using original API parameters. """
 
-        content = await self._get_proxies_content_with_api_params(response_format=ProxyResponseFormat.TXT, type_=type_,
+        content = await self._get_proxies_content_with_api_params(receive_format=ReceiveFormat.TXT, type_=type_,
                                                                   level=level, ports=ports, pex=pex, country=country,
                                                                   cex=cex, response=response, uptime=uptime,
                                                                   speed=speed, mail=mail, yandex=yandex, google=google,
@@ -271,15 +270,15 @@ class BestProxiesAPI:
     async def get_proxies_txt(
             self,
             *,
-            types: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            anonimity_levels: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            types: Union[List[Union[Type, str]], Type, str, None] = None,
+            anonimity_levels: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             exclude_ports: Optional[bool] = None,
-            countries: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            countries: Union[List[Union[Country, str]], Country, str, None] = None,
             exclude_countries: Optional[bool] = None,
             response_ms: Optional[int] = None,
             uptime_hours: Optional[int] = None,
-            speeds: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speeds: Union[List[Union[Speed, int]], Speed, int, None] = None,
             is_allowed_smtp: Optional[bool] = None,
             is_allowed_yandex: Optional[bool] = None,
             is_allowed_google: Optional[bool] = None,
@@ -304,15 +303,15 @@ class BestProxiesAPI:
     async def get_proxies_csv_with_api_params(
             self,
             *,
-            type_: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            level: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            type_: Union[List[Union[Type, str]], Type, str, None] = None,
+            level: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             pex: Optional[int] = None,
-            country: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            country: Union[List[Union[Country, str]], Country, str, None] = None,
             cex: Optional[bool] = None,
             response: Optional[int] = None,
             uptime: Optional[int] = None,
-            speed: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speed: Union[List[Union[Speed, int]], Speed, int, None] = None,
             mail: Optional[bool] = None,
             yandex: Optional[bool] = None,
             google: Optional[bool] = None,
@@ -324,7 +323,7 @@ class BestProxiesAPI:
     ) -> str:
         """ Getting proxies (CSV-content) using original API parameters. """
 
-        content = await self._get_proxies_content_with_api_params(response_format=ProxyResponseFormat.CSV,
+        content = await self._get_proxies_content_with_api_params(receive_format=ReceiveFormat.CSV,
                                                                   type_=type_, level=level, ports=ports, pex=pex,
                                                                   country=country, cex=cex, response=response,
                                                                   uptime=uptime, speed=speed, mail=mail, yandex=yandex,
@@ -337,15 +336,15 @@ class BestProxiesAPI:
     async def get_proxies_csv(
             self,
             *,
-            types: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            anonimity_levels: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            types: Union[List[Union[Type, str]], Type, str, None] = None,
+            anonimity_levels: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             exclude_ports: Optional[bool] = None,
-            countries: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            countries: Union[List[Union[Country, str]], Country, str, None] = None,
             exclude_countries: Optional[bool] = None,
             response_ms: Optional[int] = None,
             uptime_hours: Optional[int] = None,
-            speeds: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speeds: Union[List[Union[Speed, int]], Speed, int, None] = None,
             is_allowed_smtp: Optional[bool] = None,
             is_allowed_yandex: Optional[bool] = None,
             is_allowed_google: Optional[bool] = None,
@@ -368,15 +367,15 @@ class BestProxiesAPI:
     async def get_proxies_json_with_api_params(
             self,
             *,
-            type_: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            level: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            type_: Union[List[Union[Type, str]], Type, str, None] = None,
+            level: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             pex: Optional[int] = None,
-            country: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            country: Union[List[Union[Country, str]], Country, str, None] = None,
             cex: Optional[bool] = None,
             response: Optional[int] = None,
             uptime: Optional[int] = None,
-            speed: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speed: Union[List[Union[Speed, int]], Speed, int, None] = None,
             mail: Optional[bool] = None,
             yandex: Optional[bool] = None,
             google: Optional[bool] = None,
@@ -388,7 +387,7 @@ class BestProxiesAPI:
     ) -> List[dict]:
         """ Getting list proxies (JSON) using original API parameters. """
 
-        content = await self._get_proxies_content_with_api_params(response_format=ProxyResponseFormat.JSON,
+        content = await self._get_proxies_content_with_api_params(receive_format=ReceiveFormat.JSON,
                                                                   type_=type_, level=level, ports=ports, pex=pex,
                                                                   country=country, cex=cex, response=response,
                                                                   uptime=uptime, speed=speed, mail=mail, yandex=yandex,
@@ -401,15 +400,15 @@ class BestProxiesAPI:
     async def get_proxies_json(
             self,
             *,
-            types: Union[List[Union[ProxyType, str]], ProxyType, str, None] = None,
-            anonimity_levels: Union[List[Union[ProxyAnonymityLevel, int]], ProxyAnonymityLevel, int, None] = None,
+            types: Union[List[Union[Type, str]], Type, str, None] = None,
+            anonimity_levels: Union[List[Union[AnonymityLevel, int]], AnonymityLevel, int, None] = None,
             ports: Union[List[int], int, None] = None,
             exclude_ports: Optional[bool] = None,
-            countries: Union[List[Union[ProxyCountryCode, str]], ProxyCountryCode, str, None] = None,
+            countries: Union[List[Union[Country, str]], Country, str, None] = None,
             exclude_countries: Optional[bool] = None,
             response_ms: Optional[int] = None,
             uptime_hours: Optional[int] = None,
-            speeds: Union[List[Union[ProxySpeed, int]], ProxySpeed, int, None] = None,
+            speeds: Union[List[Union[Speed, int]], Speed, int, None] = None,
             is_allowed_smtp: Optional[bool] = None,
             is_allowed_yandex: Optional[bool] = None,
             is_allowed_google: Optional[bool] = None,
