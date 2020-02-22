@@ -4,7 +4,6 @@ from typing import Optional, Union, List, Tuple, Any, NoReturn
 import json as jsonlib
 
 from aiohttp import ClientSession, ClientResponse
-from bs4 import BeautifulSoup
 
 from . import helpers, exceptions
 from .params import Param
@@ -55,9 +54,8 @@ class BestProxiesAPI:
         """ Parsing the cause of the error from the server response. """
 
         html: str = content.decode(encoding="UTF-8")
-        soup = BeautifulSoup(html, "html.parser")
-        full_reason = soup.body.find_all("p", class_=None)[0].text
-        reason = full_reason.replace("Ошибка авторизации: ", "")
+        body_block = html.rsplit("<body>")[-1]
+        reason = body_block.rsplit("<p>Ошибка авторизации: ")[-1].split("</p>")[0]
 
         return reason
 
